@@ -1,0 +1,1743 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام إدارة المخزن</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --warning: #f8961e;
+            --info: #4895ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --gray-light: #e9ecef;
+            --border-radius: 0.5rem;
+            --box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tajawal', Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        /* صفحة تسجيل الدخول */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            width: 100%;
+            max-width: 450px;
+            padding: 2rem;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .login-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.15);
+        }
+
+        .login-logo {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 1.5rem;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary);
+            padding: 5px;
+            background: white;
+        }
+
+        .login-title {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: right;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--gray-light);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+            direction: rtl; /* تصحيح اتجاه الكتابة */
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.25);
+            outline: none;
+        }
+        
+        input[type="file"] {
+            padding: 0.25rem 0; /* تحسين مظهر زر رفع الملفات */
+        }
+
+
+        .btn {
+            display: inline-block;
+            font-weight: 500;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            user-select: none;
+            border: 1px solid transparent;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            color: white;
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
+
+        .btn-outline {
+            color: var(--primary);
+            background-color: transparent;
+            border-color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            color: white;
+            background-color: var(--primary);
+        }
+
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+
+        .mt-2 {
+            margin-top: 0.5rem;
+        }
+
+        .mb-3 {
+            margin-bottom: 1rem;
+        }
+
+        .login-footer {
+            margin-top: 1.5rem;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        /* الواجهة الرئيسية */
+        .app-header {
+            background: white;
+            box-shadow: var(--box-shadow);
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .brand-logo {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--gray-light);
+        }
+
+        .brand-name {
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .brand-subtitle {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            padding: 0.5rem 1rem;
+            background: var(--light);
+            color: var(--dark);
+            border-radius: var(--border-radius);
+            font-size: 0.9rem;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+        }
+
+        .nav-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .main-container {
+            padding: 1.5rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--gray-light);
+            font-weight: 700;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ed 100%);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 0.5rem 0;
+        }
+
+        .stat-label {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            white-space: nowrap;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: right;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        th {
+            background-color: var(--light);
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        tr:hover {
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+        
+        .table .btn-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.35em 0.65em;
+            font-size: 0.75em;
+            font-weight: 700;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: 50rem;
+        }
+
+        .badge-primary {
+            color: white;
+            background-color: var(--primary);
+        }
+
+        .alert {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            padding: 1rem 1.5rem;
+            border-radius: var(--border-radius);
+            color: white;
+            font-weight: 500;
+            box-shadow: var(--box-shadow);
+            z-index: 1100;
+            animation: slideIn 0.3s ease-out;
+            max-width: 350px;
+        }
+
+        .alert-success {
+            background-color: var(--success);
+        }
+
+        .alert-danger {
+            background-color: var(--danger);
+        }
+
+        .alert-warning {
+            background-color: var(--warning);
+        }
+
+        .alert-info {
+            background-color: var(--info);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+        
+        .text-muted {
+            font-size: 0.8rem;
+            color: var(--gray);
+            margin-top: 0.25rem;
+            display: block;
+        }
+
+        /* تصميم متجاوب */
+        @media (max-width: 768px) {
+            .app-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .nav-menu {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .nav-btn {
+                width: 100%;
+            }
+            
+            .card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div id="loginPage">
+    <div class="login-container">
+        <div class="login-card">
+            <img id="companyLogoDisplay" src="https://via.placeholder.com/100" alt="شعار الشركة" class="login-logo">
+            <h1 class="login-title">تسجيل الدخول إلى النظام</h1>
+            
+            <div class="form-group">
+                <label for="companyNameInput" class="form-label">اسم الشركة</label>
+                <input type="text" id="companyNameInput" class="form-control" placeholder="أدخل اسم الشركة" value="vertex">
+            </div>
+            
+            <div class="form-group">
+                <label for="companyLogoInput" class="form-label">شعار الشركة</label>
+                <input type="file" id="companyLogoInput" class="form-control" accept="image/*">
+                <small class="text-muted">سيتم حفظ الشعار محلياً على جهازك</small>
+            </div>
+            
+            <hr style="margin: 1.5rem 0; border-color: #eee;">
+            
+            <div class="form-group">
+                <label for="loginUser" class="form-label">اسم المستخدم</label>
+                <input type="text" id="loginUser" class="form-control" placeholder="أدخل اسم المستخدم" value="Hatem Alaa">
+            </div>
+            
+            <div class="form-group">
+                <label for="loginPass" class="form-label">كلمة المرور</label>
+                <input type="password" id="loginPass" class="form-control" placeholder="أدخل كلمة المرور">
+            </div>
+            
+            <button id="loginBtn" class="btn btn-primary btn-block">تسجيل الدخول</button>
+            <button id="clearBrandBtn" class="btn btn-outline btn-block mt-2">مسح بيانات الشركة</button>
+            
+            <div id="loginError" class="alert alert-danger hidden" style="margin-top: 1rem;"></div>
+            
+            <div class="login-footer">
+                نظام إدارة المخزن &copy; 2023 - جميع الحقوق محفوظة
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="appArea" class="hidden">
+    <header class="app-header">
+        <div class="brand-container">
+            <img id="brandLogo" src="" alt="شعار الشركة" class="brand-logo hidden">
+            <div>
+                <div id="brandName" class="brand-name">vertex</div>
+                <div id="brandSubtitle" class="brand-subtitle">نظام إدارة المخزن</div>
+            </div>
+        </div>
+        
+        <div class="nav-menu">
+            <button onclick="nav('dashboard')" class="nav-btn">الرئيسية</button>
+            <button onclick="nav('sale')" class="nav-btn">المبيعات</button>
+            <button onclick="nav('purchase')" class="nav-btn">المشتريات</button>
+            <button onclick="nav('stock')" class="nav-btn">المخزن</button>
+            <button id="btnProducts" onclick="nav('products')" class="nav-btn admin-only">الأصناف</button>
+            <button id="btnSuppliers" onclick="nav('suppliers')" class="nav-btn">الموردين</button>
+            <button id="btnCustomers" onclick="nav('customers')" class="nav-btn">العملاء</button>
+            <button id="btnUsers" onclick="nav('users')" class="nav-btn admin-only">المستخدمون</button>
+            <button id="logoutBtn" class="nav-btn">تسجيل خروج</button>
+        </div>
+    </header>
+    
+    <main class="main-container">
+        <div id="dashboard" class="section">
+            <div class="card">
+                <h2 class="card-title">لوحة التحكم</h2>
+                <div class="grid">
+                    <div class="stat-card">
+                        <div class="stat-label">عدد الأصناف</div>
+                        <div id="statItems" class="stat-value">0</div>
+                        <button onclick="nav('products')" class="btn btn-outline mt-2 admin-only">عرض الأصناف</button>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-label">إجمالي المبيعات</div>
+                        <div id="statSales" class="stat-value">0.00</div>
+                        <button onclick="nav('sale')" class="btn btn-outline mt-2">عرض المبيعات</button>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-label">إجمالي المشتريات</div>
+                        <div id="statPurchases" class="stat-value">0.00</div>
+                        <button onclick="nav('purchase')" class="btn btn-outline mt-2">عرض المشتريات</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="sale" class="section hidden">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h2 class="card-title">إضافة فاتورة مبيعات</h2>
+                    <div>
+                        <button onclick="printSection('salesTable')" class="btn btn-outline">طباعة</button>
+                        <button onclick="exportSection('sales')" class="btn btn-outline">تصدير</button>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="saleDate" class="form-label">تاريخ الفاتورة</label>
+                        <input type="date" id="saleDate" class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="saleSerial" class="form-label">رقم المسلسل</label>
+                        <input type="text" id="saleSerial" class="form-control" placeholder="S-0001">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="saleInvoice" class="form-label">رقم الفاتورة</label>
+                        <input type="text" id="saleInvoice" class="form-control" placeholder="INV-2023-001">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="saleTaxId" class="form-label">الرقم الضريبي للعميل</label>
+                        <input type="text" id="saleTaxId" class="form-control" onblur="lookupCustomerByTax()" placeholder="الرقم الضريبي">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="saleCustomerName" class="form-label">اسم العميل</label>
+                        <input type="text" id="saleCustomerName" class="form-control" placeholder="اسم العميل">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="saleProjectName" class="form-label">اسم المشروع</label>
+                        <input type="text" id="saleProjectName" class="form-control" placeholder="اسم المشروع">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="saleCode" class="form-label">كود الصنف</label>
+                        <input type="text" id="saleCode" class="form-control" onblur="lookupByCode('sale')" placeholder="P001">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="saleSelect" class="form-label">اختر الصنف</label>
+                        <select id="saleSelect" class="form-control"></select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="saleQty" class="form-label">الكمية</label>
+                        <input type="number" id="saleQty" class="form-control" value="1" min="1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="salePrice" class="form-label">سعر الوحدة</label>
+                        <input type="number" id="salePrice" class="form-control" value="0" min="0" step="0.01">
+                    </div>
+                </div>
+                
+                <button onclick="recordSale()" class="btn btn-primary">تسجيل الفاتورة</button>
+                
+                <h3 style="margin: 1.5rem 0 1rem; color: var(--primary);">سجل المبيعات</h3>
+                <div class="table-responsive">
+                    <table id="salesTable" class="table">
+                        <thead>
+                            <tr>
+                                <th>التاريخ</th>
+                                <th>المسلسل</th>
+                                <th>الفاتورة</th>
+                                <th>المشروع</th>
+                                <th>الرقم الضريبي</th>
+                                <th>العميل</th>
+                                <th>الصنف</th>
+                                <th>الكمية</th>
+                                <th>السعر</th>
+                                <th class="admin-only">الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div id="purchase" class="section hidden">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h2 class="card-title">إضافة فاتورة مشتريات</h2>
+                    <div>
+                        <button onclick="printSection('purchasesTable')" class="btn btn-outline">طباعة</button>
+                        <button onclick="exportSection('purchases')" class="btn btn-outline">تصدير</button>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="purchaseDate" class="form-label">تاريخ الفاتورة</label>
+                        <input type="date" id="purchaseDate" class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="purchaseInvoice" class="form-label">رقم فاتورة المورد</label>
+                        <input type="text" id="purchaseInvoice" class="form-control" placeholder="INV-P-001">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="purchaseOrder" class="form-label">رقم أمر الشراء</label>
+                        <input type="text" id="purchaseOrder" class="form-control" placeholder="PO-001">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="purchaseTaxId" class="form-label">الرقم الضريبي للمورد</label>
+                        <input type="text" id="purchaseTaxId" class="form-control" onblur="lookupSupplierByTax()" placeholder="الرقم الضريبي">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="purchaseSupplierName" class="form-label">اسم المورد</label>
+                        <input type="text" id="purchaseSupplierName" class="form-control" placeholder="اسم المورد">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="purchaseCode" class="form-label">كود الصنف</label>
+                        <input type="text" id="purchaseCode" class="form-control" onblur="lookupByCode('purchase')" placeholder="P001">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="purchaseSelect" class="form-label">اختر الصنف</label>
+                        <select id="purchaseSelect" class="form-control"></select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="purchaseQty" class="form-label">الكمية</label>
+                        <input type="number" id="purchaseQty" class="form-control" value="1" min="1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="purchasePrice" class="form-label">سعر الوحدة</label>
+                        <input type="number" id="purchasePrice" class="form-control" value="0" min="0" step="0.01">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="payMethod" class="form-label">طريقة السداد</label>
+                        <select id="payMethod" class="form-control">
+                            <option value="cash">كاش</option>
+                            <option value="credit">آجل</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <button onclick="recordPurchase()" class="btn btn-primary">تسجيل المشتريات</button>
+                
+                <h3 style="margin: 1.5rem 0 1rem; color: var(--primary);">سجل المشتريات</h3>
+                <div class="table-responsive">
+                    <table id="purchasesTable" class="table">
+                        <thead>
+                            <tr>
+                                <th>التاريخ</th>
+                                <th>الفاتورة</th>
+                                <th>أمر الشراء</th>
+                                <th>الرقم الضريبي</th>
+                                <th>المورد</th>
+                                <th>الصنف</th>
+                                <th>الكمية</th>
+                                <th>السعر</th>
+                                <th>طريقة السداد</th>
+                                <th class="admin-only">الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div id="stock" class="section hidden">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h2 class="card-title">رصيد المخزن</h2>
+                    <div>
+                        <button onclick="nav('products')" class="btn btn-outline admin-only">إدارة الأصناف</button>
+                        <button onclick="exportSection('products')" class="btn btn-outline">تصدير المخزن</button>
+                        <button onclick="printSection('stockTable')" class="btn btn-outline">طباعة</button>
+                    </div>
+                </div>
+                
+                <div class="table-responsive">
+                    <table id="stockTable" class="table">
+                        <thead>
+                            <tr>
+                                <th>كود الصنف</th>
+                                <th>اسم الصنف</th>
+                                <th>الكمية</th>
+                                <th>آخر سعر شراء</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div id="products" class="section hidden">
+            <div class="card">
+                <h2 class="card-title">إدارة الأصناف</h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="prodCode" class="form-label">كود الصنف</label>
+                        <input type="text" id="prodCode" class="form-control" placeholder="P001">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="prodName" class="form-label">اسم الصنف</label>
+                        <input type="text" id="prodName" class="form-control" placeholder="اسم الصنف">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="prodQty" class="form-label">الكمية الابتدائية</label>
+                        <input type="number" id="prodQty" class="form-control" value="0" min="0">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="prodPrice" class="form-label">سعر افتراضي (اختياري)</label>
+                        <input type="number" id="prodPrice" class="form-control" value="0" min="0" step="0.01">
+                    </div>
+                </div>
+                
+                <button onclick="addProduct()" class="btn btn-primary">إضافة صنف</button>
+                
+                <h3 style="margin: 1.5rem 0 1rem; color: var(--primary);">قائمة الأصناف</h3>
+                <div class="table-responsive">
+                    <table id="productsTable" class="table">
+                        <thead>
+                            <tr>
+                                <th>كود الصنف</th>
+                                <th>اسم الصنف</th>
+                                <th>الكمية</th>
+                                <th>السعر الافتراضي</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div id="suppliers" class="section hidden">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h2 class="card-title">إدارة الموردين</h2>
+                    <div>
+                        <button onclick="printSection('suppliersTable')" class="btn btn-outline">طباعة</button>
+                        <button onclick="exportSection('suppliers')" class="btn btn-outline">تصدير</button>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="supplierTax" class="form-label">الرقم الضريبي</label>
+                        <input type="text" id="supplierTax" class="form-control" placeholder="الرقم الضريبي">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="supplierName" class="form-label">اسم المورد</label>
+                        <input type="text" id="supplierName" class="form-control" placeholder="اسم المورد">
+                    </div>
+                </div>
+                
+                <button onclick="addSupplier()" class="btn btn-primary">إضافة مورد</button>
+                
+                <h3 style="margin: 1.5rem 0 1rem; color: var(--primary);">قائمة الموردين</h3>
+                <div class="table-responsive">
+                    <table id="suppliersTable" class="table">
+                        <thead>
+                            <tr>
+                                <th>الرقم الضريبي</th>
+                                <th>اسم المورد</th>
+                                <th>الرصيد</th>
+                                <th>عرض الحساب</th>
+                                <th class="admin-only">الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                
+                <div id="supplierAccount" class="hidden" style="margin-top: 2rem;">
+                    <h3 class="card-title">حساب المورد: <span id="supplierNameView"></span></h3>
+                    <p style="margin-bottom: 1rem;">الرصيد الحالي: <span id="supplierBalanceView" class="badge badge-primary">0.00</span></p>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="supplierPayAmount" class="form-label">المبلغ المدفوع</label>
+                            <input type="number" id="supplierPayAmount" class="form-control" value="0" min="0" step="0.01">
+                        </div>
+                    </div>
+                    
+                    <button onclick="recordSupplierPayment()" class="btn btn-primary">تسجيل دفعة</button>
+                    
+                    <h4 style="margin: 1.5rem 0 1rem; color: var(--primary);">سجل الحركات</h4>
+                    <div class="table-responsive">
+                        <table id="supplierLedger" class="table">
+                            <thead>
+                                <tr>
+                                    <th>التاريخ</th>
+                                    <th>نوع الحركة</th>
+                                    <th>ملاحظات</th>
+                                    <th>المبلغ</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="customers" class="section hidden">
+            <div class="card">
+                <h2 class="card-title">إدارة العملاء</h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="customerTax" class="form-label">الرقم الضريبي</label>
+                        <input type="text" id="customerTax" class="form-control" placeholder="الرقم الضريبي">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="customerName" class="form-label">اسم العميل</label>
+                        <input type="text" id="customerName" class="form-control" placeholder="اسم العميل">
+                    </div>
+                </div>
+                
+                <button onclick="addCustomer()" class="btn btn-primary">إضافة عميل</button>
+                
+                <h3 style="margin: 1.5rem 0 1rem; color: var(--primary);">قائمة العملاء</h3>
+                <div class="table-responsive">
+                    <table id="customersTable" class="table">
+                        <thead>
+                            <tr>
+                                <th>الرقم الضريبي</th>
+                                <th>اسم العميل</th>
+                                <th>الرصيد</th>
+                                <th>عرض الحساب</th>
+                                <th class="admin-only">الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                
+                <div id="customerAccount" class="hidden" style="margin-top: 2rem;">
+                    <h3 class="card-title">حساب العميل: <span id="customerNameView"></span></h3>
+                    <p style="margin-bottom: 1rem;">الرصيد الحالي: <span id="customerBalanceView" class="badge badge-primary">0.00</span></p>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="customerPayAmount" class="form-label">المبلغ المدفوع</label>
+                            <input type="number" id="customerPayAmount" class="form-control" value="0" min="0" step="0.01">
+                        </div>
+                    </div>
+                    
+                    <button onclick="recordCustomerPayment()" class="btn btn-primary">تسجيل دفعة</button>
+                    
+                    <h4 style="margin: 1.5rem 0 1rem; color: var(--primary);">سجل الحركات</h4>
+                    <div class="table-responsive">
+                        <table id="customerLedger" class="table">
+                            <thead>
+                                <tr>
+                                    <th>التاريخ</th>
+                                    <th>نوع الحركة</th>
+                                    <th>ملاحظات</th>
+                                    <th>المبلغ</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="users" class="section hidden">
+            <div class="card">
+                <h2 class="card-title">إدارة المستخدمين</h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="userName" class="form-label">اسم المستخدم</label>
+                        <input type="text" id="userName" class="form-control" placeholder="اسم المستخدم">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="userPassword" class="form-label">كلمة المرور</label>
+                        <input type="password" id="userPassword" class="form-control" placeholder="كلمة المرور">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="userRole" class="form-label">صلاحيات المستخدم</label>
+                        <select id="userRole" class="form-control">
+                            <option value="admin">مسؤول</option>
+                            <option value="user">مستخدم عادي</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <button onclick="addUser()" class="btn btn-primary">إضافة مستخدم</button>
+                
+                <h3 style="margin: 1.5rem 0 1rem; color: var(--primary);">قائمة المستخدمين</h3>
+                <div class="table-responsive">
+                    <table id="usersTable" class="table">
+                        <thead>
+                            <tr>
+                                <th>اسم المستخدم</th>
+                                <th>الصلاحيات</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Functions and data storage (using localStorage)
+        const storage = {
+            get: (key, defaultValue = {}) => {
+                try {
+                    const value = localStorage.getItem(key);
+                    return value ? JSON.parse(value) : defaultValue;
+                } catch (e) {
+                    console.error(`Error getting key ${key} from localStorage:`, e);
+                    return defaultValue;
+                }
+            },
+            set: (key, value) => {
+                try {
+                    localStorage.setItem(key, JSON.stringify(value));
+                } catch (e) {
+                    console.error(`Error setting key ${key} in localStorage:`, e);
+                }
+            }
+        };
+
+        let db = storage.get('inventoryDb', {
+            companyName: 'vertex',
+            companyLogo: 'https://via.placeholder.com/100',
+            users: {
+                'Hatem Alaa': { pass: '123', role: 'admin' }
+            },
+            products: {},
+            suppliers: {},
+            customers: {},
+            sales: [],
+            purchases: [],
+            // Sample data
+            products: {
+                'P001': { name: 'شاشة 24 بوصة', qty: 10, price: 1500, lastPurchasePrice: 1300 },
+                'P002': { name: 'لوحة مفاتيح', qty: 50, price: 250, lastPurchasePrice: 200 },
+            },
+            suppliers: {
+                '123456789': { name: 'المورد الأول', balance: 0, ledger: [] }
+            },
+            customers: {
+                '987654321': { name: 'العميل الأول', balance: 0, ledger: [] }
+            },
+        });
+        
+        let currentUserRole = null;
+        let currentSupplierTaxId = null; // Store the tax ID of the currently viewed supplier account
+        let currentCustomerTaxId = null; // Store the tax ID of the currently viewed customer account
+
+        const getById = id => document.getElementById(id);
+        const loginPage = getById('loginPage');
+        const appArea = getById('appArea');
+        const loginUser = getById('loginUser');
+        const loginPass = getById('loginPass');
+        const loginError = getById('loginError');
+        const loginBtn = getById('loginBtn');
+        const logoutBtn = getById('logoutBtn');
+        const companyNameInput = getById('companyNameInput');
+        const companyLogoInput = getById('companyLogoInput');
+        const companyLogoDisplay = getById('companyLogoDisplay');
+        const clearBrandBtn = getById('clearBrandBtn');
+
+        const brandName = getById('brandName');
+        const brandLogo = getById('brandLogo');
+
+        // Initial setup
+        const renderDashboard = () => {
+            getById('statItems').textContent = Object.keys(db.products).length;
+            getById('statSales').textContent = db.sales.reduce((acc, sale) => acc + (sale.qty * sale.price), 0).toFixed(2);
+            getById('statPurchases').textContent = db.purchases.reduce((acc, purchase) => acc + (purchase.qty * purchase.price), 0).toFixed(2);
+        };
+
+        const renderProducts = () => {
+            const tbody = getById('productsTable').querySelector('tbody');
+            tbody.innerHTML = '';
+            Object.entries(db.products).forEach(([code, prod]) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${code}</td>
+                    <td>${prod.name}</td>
+                    <td>${prod.qty}</td>
+                    <td>${prod.price.toFixed(2)}</td>
+                    <td class="btn-group">
+                        <button onclick="editProduct('${code}')" class="btn btn-outline btn-sm ${currentUserRole !== 'admin' ? 'hidden' : ''}">تعديل</button>
+                        <button onclick="deleteProduct('${code}')" class="btn btn-danger btn-sm ${currentUserRole !== 'admin' ? 'hidden' : ''}">حذف</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            renderStock();
+            renderSalesSelect();
+            renderPurchasesSelect();
+        };
+
+        const renderStock = () => {
+            const tbody = getById('stockTable').querySelector('tbody');
+            tbody.innerHTML = '';
+            Object.entries(db.products).forEach(([code, prod]) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${code}</td>
+                    <td>${prod.name}</td>
+                    <td><span class="badge badge-primary">${prod.qty}</span></td>
+                    <td>${(prod.lastPurchasePrice || 0).toFixed(2)}</td>
+                    <td class="btn-group">
+                        <button onclick="nav('purchase')" class="btn btn-primary btn-sm">شراء</button>
+                        <button onclick="nav('sale')" class="btn btn-outline btn-sm">بيع</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        };
+
+        const renderSales = () => {
+            const tbody = getById('salesTable').querySelector('tbody');
+            tbody.innerHTML = '';
+            db.sales.forEach((sale, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${sale.date}</td>
+                    <td>${sale.serial}</td>
+                    <td>${sale.invoice}</td>
+                    <td>${sale.project}</td>
+                    <td>${sale.customerTax}</td>
+                    <td>${sale.customerName}</td>
+                    <td>${sale.product}</td>
+                    <td>${sale.qty}</td>
+                    <td>${sale.price.toFixed(2)}</td>
+                    <td class="btn-group">
+                        <button onclick="deleteSale(${index})" class="btn btn-danger btn-sm ${currentUserRole !== 'admin' ? 'hidden' : ''}">حذف</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        };
+
+        const renderPurchases = () => {
+            const tbody = getById('purchasesTable').querySelector('tbody');
+            tbody.innerHTML = '';
+            db.purchases.forEach((purchase, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${purchase.date}</td>
+                    <td>${purchase.invoice}</td>
+                    <td>${purchase.order}</td>
+                    <td>${purchase.supplierTax}</td>
+                    <td>${purchase.supplierName}</td>
+                    <td>${purchase.product}</td>
+                    <td>${purchase.qty}</td>
+                    <td>${purchase.price.toFixed(2)}</td>
+                    <td>${purchase.payMethod === 'cash' ? 'كاش' : 'آجل'}</td>
+                    <td class="btn-group">
+                        <button onclick="deletePurchase(${index})" class="btn btn-danger btn-sm ${currentUserRole !== 'admin' ? 'hidden' : ''}">حذف</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        };
+        
+        const renderSuppliers = () => {
+            const tbody = getById('suppliersTable').querySelector('tbody');
+            tbody.innerHTML = '';
+            Object.entries(db.suppliers).forEach(([taxId, supplier]) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${taxId}</td>
+                    <td>${supplier.name}</td>
+                    <td><span class="badge badge-primary">${supplier.balance.toFixed(2)}</span></td>
+                    <td><button onclick="viewSupplierAccount('${taxId}')" class="btn btn-info btn-sm">عرض</button></td>
+                    <td class="btn-group ${currentUserRole !== 'admin' ? 'hidden' : ''}">
+                        <button onclick="editSupplier('${taxId}')" class="btn btn-outline btn-sm">تعديل</button>
+                        <button onclick="deleteSupplier('${taxId}')" class="btn btn-danger btn-sm">حذف</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            // Hide the supplier account section when re-rendering the list
+            getById('supplierAccount').classList.add('hidden');
+        };
+        
+        const renderCustomers = () => {
+            const tbody = getById('customersTable').querySelector('tbody');
+            tbody.innerHTML = '';
+            Object.entries(db.customers).forEach(([taxId, customer]) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${taxId}</td>
+                    <td>${customer.name}</td>
+                    <td><span class="badge badge-primary">${customer.balance.toFixed(2)}</span></td>
+                    <td><button onclick="viewCustomerAccount('${taxId}')" class="btn btn-info btn-sm">عرض</button></td>
+                    <td class="btn-group ${currentUserRole !== 'admin' ? 'hidden' : ''}">
+                        <button onclick="editCustomer('${taxId}')" class="btn btn-outline btn-sm">تعديل</button>
+                        <button onclick="deleteCustomer('${taxId}')" class="btn btn-danger btn-sm">حذف</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            // Hide the customer account section when re-rendering the list
+            getById('customerAccount').classList.add('hidden');
+        };
+        
+        const renderUsers = () => {
+            const tbody = getById('usersTable').querySelector('tbody');
+            tbody.innerHTML = '';
+            Object.entries(db.users).forEach(([username, user]) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${username}</td>
+                    <td>${user.role === 'admin' ? 'مسؤول' : 'مستخدم عادي'}</td>
+                    <td class="btn-group">
+                        <button onclick="editUser('${username}')" class="btn btn-outline btn-sm">تعديل</button>
+                        <button onclick="deleteUser('${username}')" class="btn btn-danger btn-sm">حذف</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        };
+
+        const renderSalesSelect = () => {
+            const select = getById('saleSelect');
+            select.innerHTML = '<option value="">اختر الصنف</option>';
+            Object.entries(db.products).forEach(([code, prod]) => {
+                const option = document.createElement('option');
+                option.value = code;
+                option.textContent = `${prod.name} (${code})`;
+                select.appendChild(option);
+            });
+            select.onchange = (e) => {
+                const code = e.target.value;
+                if (code && db.products[code]) {
+                    getById('saleCode').value = code;
+                    getById('salePrice').value = db.products[code].price;
+                }
+            };
+        };
+
+        const renderPurchasesSelect = () => {
+            const select = getById('purchaseSelect');
+            select.innerHTML = '<option value="">اختر الصنف</option>';
+            Object.entries(db.products).forEach(([code, prod]) => {
+                const option = document.createElement('option');
+                option.value = code;
+                option.textContent = `${prod.name} (${code})`;
+                select.appendChild(option);
+            });
+             select.onchange = (e) => {
+                const code = e.target.value;
+                if (code && db.products[code]) {
+                    getById('purchaseCode').value = code;
+                    getById('purchasePrice').value = db.products[code].price;
+                }
+            };
+        };
+        
+        const updateCompanyInfo = () => {
+            brandName.textContent = db.companyName;
+            brandLogo.src = db.companyLogo;
+            companyNameInput.value = db.companyName;
+            companyLogoDisplay.src = db.companyLogo;
+            
+            if (db.companyName && db.companyLogo) {
+                brandLogo.classList.remove('hidden');
+            } else {
+                brandLogo.classList.add('hidden');
+            }
+        };
+        
+        const showAdminButtons = (show) => {
+            document.querySelectorAll('.admin-only').forEach(btn => {
+                if (show) {
+                    btn.classList.remove('hidden');
+                } else {
+                    btn.classList.add('hidden');
+                }
+            });
+        };
+
+        // UI Functions
+        window.nav = (sectionId) => {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            getById(sectionId).classList.remove('hidden');
+            
+            // Re-render data for the current section
+            if (sectionId === 'dashboard') renderDashboard();
+            if (sectionId === 'products') renderProducts();
+            if (sectionId === 'stock') renderStock();
+            if (sectionId === 'sale') renderSales();
+            if (sectionId === 'purchase') renderPurchases();
+            if (sectionId === 'suppliers') renderSuppliers();
+            if (sectionId === 'customers') renderCustomers();
+            if (sectionId === 'users') renderUsers();
+        };
+
+        window.lookupByCode = (type) => {
+            const code = type === 'sale' ? getById('saleCode').value : getById('purchaseCode').value;
+            const select = type === 'sale' ? getById('saleSelect') : getById('purchaseSelect');
+            const priceInput = type === 'sale' ? getById('salePrice') : getById('purchasePrice');
+            if (db.products[code]) {
+                select.value = code;
+                priceInput.value = db.products[code].price;
+            } else {
+                select.value = '';
+                priceInput.value = 0;
+            }
+        };
+
+        window.lookupCustomerByTax = () => {
+            const taxId = getById('saleTaxId').value;
+            if (db.customers[taxId]) {
+                getById('saleCustomerName').value = db.customers[taxId].name;
+            } else {
+                getById('saleCustomerName').value = '';
+                if (taxId.trim() !== '' && confirm(`العميل بالرقم الضريبي ${taxId} غير موجود. هل ترغب في إضافته؟`)) {
+                    getById('customerTax').value = taxId;
+                    getById('customerName').value = '';
+                    nav('customers');
+                }
+            }
+        };
+
+        window.lookupSupplierByTax = () => {
+            const taxId = getById('purchaseTaxId').value;
+            if (db.suppliers[taxId]) {
+                getById('purchaseSupplierName').value = db.suppliers[taxId].name;
+            } else {
+                getById('purchaseSupplierName').value = '';
+                if (taxId.trim() !== '' && confirm(`المورد بالرقم الضريبي ${taxId} غير موجود. هل ترغب في إضافته؟`)) {
+                    getById('supplierTax').value = taxId;
+                    getById('supplierName').value = '';
+                    nav('suppliers');
+                }
+            }
+        };
+
+        // Action Functions
+        loginBtn.onclick = () => {
+            const user = loginUser.value;
+            const pass = loginPass.value;
+            if (db.users[user] && db.users[user].pass === pass) {
+                loginPage.classList.add('hidden');
+                appArea.classList.remove('hidden');
+                updateCompanyInfo();
+                nav('dashboard');
+                loginError.classList.add('hidden');
+                
+                currentUserRole = db.users[user].role;
+                showAdminButtons(currentUserRole === 'admin');
+
+            } else {
+                loginError.textContent = 'اسم المستخدم أو كلمة المرور غير صحيحة.';
+                loginError.classList.remove('hidden');
+            }
+        };
+
+        logoutBtn.onclick = () => {
+            appArea.classList.add('hidden');
+            loginPage.classList.remove('hidden');
+            loginPass.value = '';
+            loginError.classList.add('hidden');
+            currentUserRole = null;
+        };
+
+        companyLogoInput.onchange = (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    db.companyLogo = e.target.result;
+                    storage.set('inventoryDb', db);
+                    updateCompanyInfo();
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+        
+        clearBrandBtn.onclick = () => {
+            db.companyName = 'vertex';
+            db.companyLogo = 'https://via.placeholder.com/100';
+            storage.set('inventoryDb', db);
+            updateCompanyInfo();
+        };
+
+        window.addProduct = () => {
+             if (currentUserRole !== 'admin') { alert('ليس لديك صلاحية للقيام بهذا الإجراء.'); return; }
+            const code = getById('prodCode').value.trim();
+            const name = getById('prodName').value.trim();
+            const qty = parseInt(getById('prodQty').value);
+            const price = parseFloat(getById('prodPrice').value);
+            
+            if (code && name && !isNaN(qty) && !isNaN(price)) {
+                db.products[code] = { name, qty, price, lastPurchasePrice: 0 };
+                storage.set('inventoryDb', db);
+                renderProducts();
+                getById('prodCode').value = '';
+                getById('prodName').value = '';
+                getById('prodQty').value = 0;
+                getById('prodPrice').value = 0;
+            } else {
+                alert('الرجاء إدخال بيانات صحيحة.');
+            }
+        };
+        
+        window.editProduct = (code) => {
+            if (currentUserRole !== 'admin') { alert('ليس لديك صلاحية للقيام بهذا الإجراء.'); return; }
+            const prod = db.products[code];
+            if (prod) {
+                getById('prodCode').value = code;
+                getById('prodName').value = prod.name;
+                getById('prodQty').value = prod.qty;
+                getById('prodPrice').value = prod.price;
+            }
+        };
+        
+        window.deleteProduct = (code) => {
+            if (currentUserRole !== 'admin') { alert('ليس لديك صلاحية للقيام بهذا الإجراء.'); return; }
+            if (confirm('هل أنت متأكد من حذف هذا الصنف؟')) {
+                delete db.products[code];
+                storage.set('inventoryDb', db);
+                renderProducts();
+            }
+        };
+        
+        window.recordSale = () => {
+            const date = getById('saleDate').value;
+            const serial = getById('saleSerial').value;
+            const invoice = getById('saleInvoice').value;
+            const customerTax = getById('saleTaxId').value;
+            const customerName = getById('saleCustomerName').value;
+            const projectName = getById('saleProjectName').value;
+            const productCode = getById('saleSelect').value;
+            const qty = parseInt(getById('saleQty').value);
+            const price = parseFloat(getById('salePrice').value);
+            
+            if (date && serial && invoice && customerName && productCode && !isNaN(qty) && !isNaN(price) && db.products[productCode]) {
+                if (db.products[productCode].qty >= qty) {
+                    db.sales.push({ date, serial, invoice, project: projectName, customerTax, customerName, product: db.products[productCode].name, qty, price });
+                    db.products[productCode].qty -= qty;
+                    storage.set('inventoryDb', db);
+                    renderSales();
+                    renderStock();
+                    renderDashboard();
+                    alert('تم تسجيل الفاتورة بنجاح!');
+                } else {
+                    alert('الكمية المطلوبة أكبر من الكمية المتاحة في المخزن.');
+                }
+            } else {
+                alert('الرجاء إدخال جميع البيانات المطلوبة بشكل صحيح.');
+            }
+        };
+        
+        window.deleteSale = (index) => {
+            if (currentUserRole !== 'admin') { alert('ليس لديك صلاحية للقيام بهذا الإجراء.'); return; }
+            if (confirm('هل أنت متأكد من حذف هذه الفاتورة؟')) {
+                const sale = db.sales[index];
+                const product = Object.values(db.products).find(p => p.name === sale.product);
+                if (product) {
+                    product.qty += sale.qty;
+                }
+                db.sales.splice(index, 1);
+                storage.set('inventoryDb', db);
+                renderSales();
+                renderStock();
+                renderDashboard();
+            }
+        };
+
+        window.recordPurchase = () => {
+            const date = getById('purchaseDate').value;
+            const invoice = getById('purchaseInvoice').value;
+            const order = getById('purchaseOrder').value;
+            const supplierTax = getById('purchaseTaxId').value;
+            const supplierName = getById('purchaseSupplierName').value;
+            const productCode = getById('purchaseSelect').value;
+            const qty = parseInt(getById('purchaseQty').value);
+            const price = parseFloat(getById('purchasePrice').value);
+            const payMethod = getById('payMethod').value;
+            
+            if (date && invoice && supplierName && productCode && !isNaN(qty) && !isNaN(price)) {
+                db.purchases.push({ date, invoice, order, supplierTax, supplierName, product: db.products[productCode].name, qty, price, payMethod });
+                db.products[productCode].qty += qty;
+                db.products[productCode].lastPurchasePrice = price; // Update last purchase price
+                if (payMethod === 'credit' && db.suppliers[supplierTax]) {
+                    db.suppliers[supplierTax].balance += (qty * price);
+                    db.suppliers[supplierTax].ledger.push({ date: date, type: 'فاتورة مشتريات', notes: `فاتورة رقم ${invoice}`, amount: (qty * price) });
+                }
+                storage.set('inventoryDb', db);
+                renderPurchases();
+                renderStock();
+                renderDashboard();
+                alert('تم تسجيل المشتريات بنجاح!');
+            } else {
+                alert('الرجاء إدخال جميع البيانات المطلوبة بشكل صحيح.');
+            }
+        };
+
+        window.deletePurchase = (index) => {
+            if (currentUserRole !== 'admin') { alert('ليس لديك صلاحية للقيام بهذا الإجراء.'); return; }
+            if (confirm('هل أنت متأكد من حذف هذه الفاتورة؟')) {
+                const purchase = db.purchases[index];
+                const product = Object.values(db.products).find(p => p.name === purchase.product);
+                if (product) {
+                    product.qty -= purchase.qty;
+                }
+                if (purchase.payMethod === 'credit' && db.suppliers[purchase.supplierTax]) {
+                    db.suppliers[purchase.supplierTax].balance -= (purchase.qty * purchase.price);
+                    db.suppliers[purchase.supplierTax].ledger.push({ date: new Date().toISOString().slice(0, 10), type: 'حذف فاتورة', notes: 'حذف فاتورة مشتريات', amount: -(purchase.qty * purchase.price) });
+                }
+                db.purchases.splice(index, 1);
+                storage.set('inventoryDb', db);
+                renderPurchases();
+                renderStock();
+                renderDashboard();
+            }
+        };
+
+        window.addSupplier = () => {
+            const taxId = getById('supplierTax').value.trim();
+            const name = getById('supplierName').value.trim();
+            if (taxId && name) {
+                if (!db.suppliers[taxId]) {
+                    db.suppliers[taxId] = { name, balance: 0, ledger: [] };
+                    storage.set('inventoryDb', db);
+                    renderSuppliers();
+                    getById('supplierTax').value = '';
+                    getById('supplierName').value = '';
+                } else {
+                    alert('هذا الرقم الضريبي مسجل بالفعل.');
+                }
+            } else {
+                alert('الرجاء إدخال الرقم الضريبي واسم المورد.');
+            }
+        };
+
+        window.editSupplier = (taxId) => {
+            if (currentUserRole !== 'admin') { alert('ليس لديك صلاحية للقيام بهذا الإجراء.'); return; }
+            const supplier = db.suppliers[taxId];
+            if (supplier) {
+                getById('supplierTax').value = taxId;
+                getById('supplierName').value = supplier.name;
+            }
+        };
+
+        window.deleteSupplier = (taxId) => {
+            if (currentUserRole !== 'admin') { alert('ليس لديك صلاحية للقيام بهذا الإجراء.'); return; }
+            if (confirm('هل أنت متأكد من حذف هذا المورد؟')) {
+                delete db.suppliers[taxId];
+                storage.set('inventoryDb', db);
+                renderSuppliers();
+            }
+        };
+        
+        window.viewSupplierAccount = (taxId) => {
+            const supplier = db.suppliers[taxId];
+            if (supplier) {
+                currentSupplierTaxId = taxId; // Set the current supplier's ID
+                getById('supplierNameView').textContent = supplier.name;
+                getById('supplierBalanceView').textContent = supplier.balance.toFixed(2);
+                
+                const tbody = getById('supplierLedger').querySelector('tbody');
+                tbody.innerHTML = '';
+                supplier.ledger.forEach(entry => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${entry.date}</td>
+                        <td>${entry.type}</td>
+                        <td>${entry.notes}</td>
+                        <td>${entry.amount.toFixed(2)}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+                
+                getById('supplierAccount').classList.remove('hidden');
+            }
+        };
+        
+        window.recordSupplierPayment = () => {
+            if (currentUserRole !== 'admin') { alert('ليس لديك صلاحية للقيام بهذا الإجراء.'); return; }
+            const amount = parseFloat(getById('supplierPayAmount').value);
+            const taxId = currentSupplierTaxId; // Use the stored ID
+            
+            if (taxId && !isNaN(amount) && amount > 0) {
+                if (db.suppliers[taxId]) {
+                    db.suppliers[taxId].balance -= amount;
+                    db.suppliers[taxId].ledger.push({ date: new Date().toISOString().slice(0, 10), type: 'دفعة نقدية', notes: 'سداد دفعة', amount: -amount });
+                    storage.set('inventoryDb', db);
+                    viewSupplierAccount(taxId);
+                    alert('تم تسجيل الدفعة بنجاح!');
+                    getById('supplierPayAmount').value = 0; // Clear the input
+                }
+            } else {
+                alert('الرجاء إدخال مبلغ صحيح.');
+            }
+        };
+
+        window.addCustomer = () => {
+            const taxId = getById('customerTax').value.trim();
+            const name = getById('customerName').value.trim();
+            if (taxId && name) {
+                if (!db.customers[taxId]) {
+                    db.customers[taxId] = { name, balance: 0, ledger: [] };
+                    storage.set('inventoryDb', db);
+                    renderCustomers();
+                    getById('customerTax').value = '';
+                    getById('customerName').value = '';
+                } else {
+                    alert('هذا الرقم الضريبي مسجل بالفعل.');
+                }
+            } else {
+                alert('الرجاء إدخال الرقم الضريبي واسم العميل.');
+            }
+        };
+        
+        window.editCustomer = (taxId) => {
+            if (currentUserRole !== 'admin') { alert('ليس لديك صلاحية للقيام بهذا الإجراء.'); return; }
+            const customer = db.customers[taxId];
+            if (customer) {
+                getById('customerTax').value = taxId;
+                getById('customerName').value = customer.name;
+            }
+        };
+        
+        window.deleteCustomer = (taxId) => {
+            if (currentUserRole !== 'admin') { alert('ليس لديك صلاحية للقيام بهذا الإجراء.'); return; }
+            if (confirm('هل أنت متأكد من حذف هذا العميل؟')) {
+                delete db.customers[taxId];
+                storage.set('inventoryDb', db);
+                renderCustomers();
+            }
+        };
+        
+        window.viewCustomerAccount = (taxId) => {
+            const customer = db.customers[taxId];
+            if (customer) {
+                currentCustomerTaxId = taxId; // Set the current customer's ID
+                getById('customerNameView').textContent = customer.name;
+                getById('customerBalanceView').textContent = customer.balance.toFixed(2);
+                
+                const tbody = getById('customerLedger').querySelector('tbody');
+                tbody.innerHTML = '';
+                customer.ledger.forEach(entry => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${entry.date}</td>
+                        <td>${entry.type}</td>
+                        <td>${entry.notes}</td>
+                        <td>${entry.amount.toFixed(2)}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+                
+                getById('customerAccount').classList.remove('hidden');
+            }
+        };
+        
+        window.recordCustomerPayment = () => {
+            if (currentUserRole !== 'admin') { alert('ليس لديك صلاحية للقيام بهذا الإجراء.'); return; }
+            const amount = parseFloat(getById('customerPayAmount').value);
+            const taxId = currentCustomerTaxId; // Use the stored ID
+            if (taxId && !isNaN(amount) && amount > 0) {
+                if (db.customers[taxId]) {
+                    db.customers[taxId].balance -= amount;
+                    db.customers[taxId].ledger.push({ date: new Date().toISOString().slice(0, 10), type: 'تحصيل نقدي', notes: 'سداد دفعة', amount: -amount });
+                    storage.set('inventoryDb', db);
+                    viewCustomerAccount(taxId);
+                    alert('تم تسجيل الدفعة بنجاح!');
+                    getById('customerPayAmount').value = 0; // Clear the input
+                }
+            } else {
+                alert('الرجاء إدخال مبلغ صحيح.');
+            }
+        };
+
+        window.addUser = () => {
+            if (currentUserRole !== 'admin') { alert('ليس لديك صلاحية للقيام بهذا الإجراء.'); return; }
+            const username = getById('userName').value.trim();
+            const password = getById('userPassword').value.trim();
+            const role = getById('userRole').value;
+
+            if (username && password) {
+                if (!db.users[username]) {
+                    db.users[username] = { pass: password, role };
+                    storage.set('inventoryDb', db);
+                    renderUsers();
+                    getById('userName').value = '';
+                    getById('userPassword').value = '';
+                    alert('تمت إضافة المستخدم بنجاح!');
+                } else {
+                    alert('اسم المستخدم هذا موجود بالفعل.');
+                }
+            } else {
+                alert('الرجاء إدخال اسم المستخدم وكلمة المرور.');
+            }
+        };
+        
+        window.editUser = (username) => {
+            if (currentUserRole !== 'admin') { alert('ليس لديك صلاحية للقيام بهذا الإجراء.'); return; }
+            const user = db.users[username];
+            if (user) {
+                getById('userName').value = username;
+                getById('userPassword').value = user.pass;
+                getById('userRole').value = user.role;
+            }
+        };
+
+        window.deleteUser = (username) => {
+            if (currentUserRole !== 'admin') { alert('ليس لديك صلاحية للقيام بهذا الإجراء.'); return; }
+            if (confirm('هل أنت متأكد من حذف هذا المستخدم؟')) {
+                delete db.users[username];
+                storage.set('inventoryDb', db);
+                renderUsers();
+            }
+        };
+
+        window.printSection = (tableId) => {
+            const table = getById(tableId);
+            const printWindow = window.open('', '', 'height=600,width=800');
+            printWindow.document.write('<html><head><title>طباعة الجدول</title>');
+            printWindow.document.write('<style>');
+            printWindow.document.write(`
+                @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
+                body { font-family: 'Tajawal', sans-serif; direction: rtl; text-align: right; }
+                table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                th, td { border: 1px solid #ddd; padding: 8px; }
+                th { background-color: #f2f2f2; }
+            `);
+            printWindow.document.write('</style></head><body>');
+            printWindow.document.write(table.outerHTML);
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            printWindow.print();
+        };
+
+        window.exportSection = (type) => {
+            let data = [];
+            let headers = [];
+            
+            if (type === 'sales') {
+                data = db.sales.map(s => [s.date, s.serial, s.invoice, s.project, s.customerTax, s.customerName, s.product, s.qty, s.price]);
+                headers = ['التاريخ', 'المسلسل', 'الفاتورة', 'المشروع', 'الرقم الضريبي', 'العميل', 'الصنف', 'الكمية', 'السعر'];
+            } else if (type === 'purchases') {
+                data = db.purchases.map(p => [p.date, p.invoice, p.order, p.supplierTax, p.supplierName, p.product, p.qty, p.price, p.payMethod === 'cash' ? 'كاش' : 'آجل']);
+                headers = ['التاريخ', 'الفاتورة', 'أمر الشراء', 'الرقم الضريبي', 'المورد', 'الصنف', 'الكمية', 'السعر', 'طريقة السداد'];
+            } else if (type === 'products') {
+                data = Object.entries(db.products).map(([code, prod]) => [code, prod.name, prod.qty, prod.lastPurchasePrice || prod.price]);
+                headers = ['كود الصنف', 'اسم الصنف', 'الكمية', 'السعر'];
+            } else if (type === 'suppliers') {
+                data = Object.entries(db.suppliers).map(([taxId, supplier]) => [taxId, supplier.name, supplier.balance]);
+                headers = ['الرقم الضريبي', 'اسم المورد', 'الرصيد'];
+            } else if (type === 'customers') {
+                data = Object.entries(db.customers).map(([taxId, customer]) => [taxId, customer.name, customer.balance]);
+                headers = ['الرقم الضريبي', 'اسم العميل', 'الرصيد'];
+            }
+            
+            const csv = [
+                headers.join(','),
+                ...data.map(row => row.map(item => `"${item}"`).join(','))
+            ].join('\n');
+            
+            const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            if (link.download !== undefined) {
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', `${type}_export.csv`);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        };
+
+
+        // Initialize
+        updateCompanyInfo();
+        renderProducts();
+        renderSuppliers();
+        renderCustomers();
+        renderUsers();
+        renderSales();
+        renderPurchases();
+        renderDashboard();
+    });
+</script>
+
+</body>
+</html>
